@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 import firebase from "./firebase.js";
 import { Button, Container, Row, Col, Input } from "reactstrap";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const Signup = ({ handleAuth }) => {
       return;
     } else {
       setMobileErr(false);
-      
+
       var recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha");
       var number = `+91${mobile}`;
       firebase
@@ -42,10 +42,10 @@ const Signup = ({ handleAuth }) => {
         .then(function (e) {
           setOtpSent(true);
           setVerificationId(e.verificationId);
-            })
-            .catch(function (error) {
-              console.error(error);
-            });     
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     }
   };
 
@@ -62,21 +62,24 @@ const Signup = ({ handleAuth }) => {
         if (result?.additionalUserInfo?.isNewUser) {
           const userName = prompt("Enter your name:");
           if (userName) {
-            firebase.firestore().collection("users").doc(phoneNumber).set({
-              name: userName,
-              phoneNumber: phoneNumber
-            })
-            .then(() => {
-              localStorage.setItem("isAuthenticated", "true");
-              console.log("User authenticated. Redirecting to /home...");
-              console.error("Error adding user to navigate: ");
-              handleAuth();
-              navigate("/home");
-
-            })
-            .catch((error) => {
-              console.error("Error adding user to Firestore: ", error);
-            });
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(phoneNumber)
+              .set({
+                name: userName,
+                phoneNumber: phoneNumber,
+              })
+              .then(() => {
+                localStorage.setItem("isAuthenticated", "true");
+                console.log("User authenticated. Redirecting to /home...");
+                console.error("Error adding user to navigate: ");
+                handleAuth();
+                navigate("/home");
+              })
+              .catch((error) => {
+                console.error("Error adding user to Firestore: ", error);
+              });
           } else {
             console.error("User did not enter a name.");
           }
@@ -90,57 +93,91 @@ const Signup = ({ handleAuth }) => {
         console.error(error);
       });
   };
-  
 
   return (
-    <div style={{backgroundColor: '#b3cccc',height: '592px'}}>
+    <div style={{ backgroundColor: "#b3cccc", height: "592px" }}>
       <Container>
         <Row>
           <Col>
-            <form style={{display: 'flex',flexDirection: 'column',alignItems: 'center',paddingTop: '50px'}}>
-            <TextField
-  hiddenLabel
-  // id="filled-hidden-label-small"
-  variant="filled"
-  size="small"
-  type="text"
+            <form
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                paddingTop: "50px",
+              }}
+            >
+              <TextField
+                hiddenLabel
+                variant="filled"
+                size="small"
+                type="text"
                 name="mobile"
-                sx={{color:'red' }}
-                placeholder='Enter Your Number'
+                sx={{ color: "red" }}
+                placeholder="Enter Your Number"
                 value={mobile}
                 onChange={handleChange}
                 maxLength="10"
-/>
-             
+              />
+
               {mobileErr ? (
                 <span className="text-danger">Enter Valid Mobile Number</span>
               ) : (
                 ""
               )}
-          {!otpSent && <div  style={{paddingTop: '13px'}} id="recaptcha"></div>}
               {!otpSent && (
-                <Button outline color="success" onClick={handleClick} style={{pointer:'cursor',  marginTop: '30px',width: '140px',borderRadius: '10px',height: '40px',fontWeight: '900',backgroundColor: '#293d3d',color: '#d1e0e0'}}>
+                <div style={{ paddingTop: "13px" }} id="recaptcha"></div>
+              )}
+              {!otpSent && (
+                <Button
+                  outline
+                  color="success"
+                  onClick={handleClick}
+                  style={{
+                    pointer: "cursor",
+                    marginTop: "30px",
+                    width: "140px",
+                    borderRadius: "10px",
+                    height: "40px",
+                    fontWeight: "900",
+                    backgroundColor: "#293d3d",
+                    color: "#d1e0e0",
+                  }}
+                >
                   Send OTP
                 </Button>
               )}
               {otpSent && (
-                <div style={{paddingTop:'20px',display:'flex',flexDirection:'column'}}>
-                <TextField
-                 className="shakes"
+                <div
+                  style={{
+                    paddingTop: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <TextField
+                    className="shakes"
                     type="num"
                     name="otp"
                     value={otp}
                     onChange={handleOtpChange}
                     maxLength="6"
                     placeholder="Enter OTP"
-  hiddenLabel
-  // id="filled-hidden-label-small"
-  variant="filled"
-  size="small"
-/>
-                 
+                    hiddenLabel
+                    variant="filled"
+                    size="small"
+                  />
+
                   <Button
-                  style={{pointer:'cursor',  marginTop: '30px',borderRadius: '10px',height: '40px',fontWeight: '900',backgroundColor: '#293d3d',color: '#d1e0e0'}}
+                    style={{
+                      pointer: "cursor",
+                      marginTop: "30px",
+                      borderRadius: "10px",
+                      height: "40px",
+                      fontWeight: "900",
+                      backgroundColor: "#293d3d",
+                      color: "#d1e0e0",
+                    }}
                     outline
                     color="success"
                     onClick={handleVerifyOtp}
@@ -151,8 +188,7 @@ const Signup = ({ handleAuth }) => {
               )}
             </form>
           </Col>
-          <Col>
-          </Col>
+          <Col></Col>
         </Row>
       </Container>
       <label id="successAlert" className="text-success"></label>
